@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:metenoxin_flutter/pages/eve_map/eve_map.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-void main() {
-  runApp(
-    const MyApp(),
-  );
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+      options: const FirebaseOptions(
+    apiKey: 'AIzaSyB1LqbRkULObSr6-RhUFZcpwbgVq6I9fPg',
+    appId: '1:376124232338:web:dda0692b985b8c80c14c4b',
+    messagingSenderId: '376124232338',
+    projectId: 'metenoxin',
+  ));
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -13,7 +20,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Metenox.in',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,

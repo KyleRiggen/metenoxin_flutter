@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:http/http.dart' as http;
 import 'package:metenoxin_flutter/pages/eve_map/load_api.dart';
+import 'package:metenoxin_flutter/services/database_service.dart';
 
 class EveMap extends StatefulWidget {
   const EveMap({super.key});
@@ -16,6 +17,7 @@ class _EveMapState extends State<EveMap> {
   List<dynamic>? oreData;
   List<bool> _isHovering = [];
   double? cheapestPrice;
+  final testingData = FirestoreService();
 
   @override
   void initState() {
@@ -23,6 +25,7 @@ class _EveMapState extends State<EveMap> {
     loadMoonsAsset();
     loadOreAsset();
     _loadPrice();
+    // testingData.addMoon();
   }
 
   Future<void> _loadPrice() async {
