@@ -1,6 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+
+import 'package:metenoxin_flutter/pages/reddit_data/challenger_list.dart'; // For decoding JSON
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,77 +21,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Metenox.in',
+      title: 'API Test',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+        primarySwatch: Colors.blue,
       ),
-      home: const TestConnection(),
-    );
-  }
-}
-
-class TestConnection extends StatefulWidget {
-  const TestConnection({super.key});
-
-  @override
-  State<TestConnection> createState() => _TestConnectionState();
-}
-
-class _TestConnectionState extends State<TestConnection> {
-  String message = "Testing Firebase connection...";
-
-  @override
-  void initState() {
-    super.initState();
-    _testFirebaseConnection();
-  }
-
-  Future<void> _testFirebaseConnection() async {
-    try {
-      // Get a reference to Firestore
-      final firestore = FirebaseFirestore.instance;
-
-      // Write a test document to a collection named 'test'
-      await firestore.collection('test').add({
-        'timestamp': DateTime.now(),
-        'message': 'Hello, Firebase!',
-      });
-
-      // Read back the data to confirm the connection
-      final snapshot = await firestore.collection('test').get();
-      final docs = snapshot.docs;
-
-      if (docs.isNotEmpty) {
-        setState(() {
-          message =
-              "Firebase is connected! Retrieved data: ${docs.first.data()}";
-        });
-      } else {
-        setState(() {
-          message = "Firebase is connected, but no data found.";
-        });
-      }
-    } catch (e) {
-      setState(() {
-        message = "Error connecting to Firebase: $e";
-      });
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Firebase Connection Test"),
-      ),
-      body: Center(
-        child: Text(
-          message,
-          textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 18),
-        ),
-      ),
+      home: const ApiTestPage(),
     );
   }
 }

@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
-import 'package:http/http.dart' as http;
 import 'package:metenoxin_flutter/pages/eve_map/load_api.dart';
 import 'package:metenoxin_flutter/services/database_service.dart';
 
