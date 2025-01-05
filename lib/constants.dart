@@ -1,14 +1,15 @@
 class Constants {
   List<String> regions = ['na1', 'kr', 'euw1'];
 
-  int apiCallNumber = 1;
+  int apiCallNumber = 2000000;
 
   int streakNumber = 3;
 
-  String previousWeekPath = "lib/previous_weeks/dec1.json";
+  String new_document = "new-champs";
+  String old_document = "old-champs";
   List previousWeekPaths = [];
   String previousWeekLink =
-      "https://www.reddit.com/r/doubloonin/comments/1h3s1z8/league_of_legends_champion_popularityperformance/";
+      "https://www.reddit.com/r/doubloonin/comments/1hgwspe/league_of_legends_champion_popularityperformance/";
 
   Map<String, int> points = {
     "picks": 1,
