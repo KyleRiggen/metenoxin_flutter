@@ -1,7 +1,7 @@
 class Constants {
   List<String> regions = ['na1', 'kr', 'euw1'];
 
-  int apiCallNumber = 2;
+  int apiCallNumber = 200000;
 
   int streakNumber = 3;
 
