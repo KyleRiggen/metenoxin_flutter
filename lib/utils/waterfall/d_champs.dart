@@ -49,8 +49,6 @@ class Champions {
           var teams = matchData['info']['teams'];
 
           participants.forEach((participant) {
-            // onStatusUpdate(
-            //     'Processing champ ID: ${participant['championName']} of ${setupChampData.length}');
             String championKey = participant['championId'].toString();
             int kills = participant['kills'] ?? 0;
             int deaths = participant['deaths'] ?? 0;
@@ -71,10 +69,8 @@ class Champions {
                 champ['loses'] =
                     win ? (champ['loses'] ?? 0) : (champ['loses'] ?? 0) + 1;
 
-                // Initialize 'players' if it doesn't exist
                 champ.putIfAbsent('players', () => <Map<String, dynamic>>[]);
 
-                // Check if the player already exists in the 'players' array
                 var existingPlayer = champ['players'].firstWhere(
                   (player) =>
                       player['riotIdGameName'] == riotIdGameName &&
@@ -121,8 +117,8 @@ class Champions {
           });
         }
       }
-      await _firestore.saveListMap_setup(
-          data: setupChampData, document: _constants.new_document);
+      await _firestore.saveIndividualChamps(
+          data: setupChampData, collectionName: 'january5th');
       onStatusUpdate("Champion data successfully updated in Firestore.");
       _points.assignPoints(onStatusUpdate: onStatusUpdate);
     } catch (e) {

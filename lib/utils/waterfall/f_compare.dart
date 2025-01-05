@@ -10,42 +10,51 @@ class Compare {
   Future<void> compareFromLastWeek(
       {required Function(String) onStatusUpdate}) async {
     try {
-      final List<Map<String, dynamic>> newList =
-          await _firestore.getListMap_setup(document: _constants.new_document);
-      final List<Map<String, dynamic>> oldList = await _firestore
-          .getListMap_setup_old(document: _constants.old_document);
+      List<Map<String, dynamic>> champsList =
+          await _firestore.fetchIndividualChamps(collectionName: "january5th");
 
-      // Create ranking maps (old vs new rank)
-      final Map<String, int> oldRanks = {
-        for (int i = 0; i < oldList.length; i++) oldList[i]['key']: i + 1,
-      };
+      // // Create ranking maps (old vs new rank)
+      // final Map<String, int> oldRanks = {
+      //   for (int i = 0; i < oldList.length; i++) oldList[i]['key']: i + 1,
+      // };
 
-      final Map<String, int> newRanks = {
-        for (int i = 0; i < newList.length; i++) newList[i]['key']: i + 1,
-      };
+      // final Map<String, int> newRanks = {
+      //   for (int i = 0; i < newList.length; i++) newList[i]['key']: i + 1,
+      // };
+      if (champsList.isEmpty) {
+        onStatusUpdate("No champion data available to process.");
+        return;
+      }
+
+      // Sort champions by points in descending order
+      champsList.sort((a, b) {
+        final pointsA = a['points'] ?? 0; // Default to 0 if points are missing
+        final pointsB = b['points'] ?? 0; // Default to 0 if points are missing
+        return pointsB.compareTo(pointsA); // Sort in descending order
+      });
 
       List<Map<String, dynamic>> championsData = [];
-      for (int i = 0; i < newList.length; i++) {
-        var champion = newList[i];
+      for (int i = 0; i < champsList.length; i++) {
+        var champion = champsList[i];
         String championKey = champion['key'];
         String championName = champion['name'];
         int championPoints = champion['points'];
 
-        // Calculate rank change
-        var oldRank =
-            oldRanks[championKey] ?? oldList.length + 1; // Default to last+1
-        var newRank =
-            newRanks[championKey] ?? newList.length + 1; // Default to last+1
-        var rankChange = oldRank - newRank;
+        // // Calculate rank change
+        // var oldRank =
+        //     oldRanks[championKey] ?? oldList.length + 1; // Default to last+1
+        // var newRank =
+        //     newRanks[championKey] ?? newList.length + 1; // Default to last+1
+        // var rankChange = oldRank - newRank;
 
-        String rankChangeText = "";
-        if (rankChange > 0) {
-          rankChangeText = "🟩🔺$rankChange";
-        } else if (rankChange < 0) {
-          rankChangeText = "🟥🔻${rankChange.abs()}";
-        } else {
-          rankChangeText = "🟨0";
-        }
+        // String rankChangeText = "";
+        // if (rankChange > 0) {
+        //   rankChangeText = "🟩🔺$rankChange";
+        // } else if (rankChange < 0) {
+        //   rankChangeText = "🟥🔻${rankChange.abs()}";
+        // } else {
+        //   rankChangeText = "🟨0";
+        // }
 
         // Handle current week's star player
         var topPlayer = champion['players']?.isNotEmpty == true
@@ -74,10 +83,10 @@ class Compare {
 
         // Add champion data with streak count, star player information, and flag
         championsData.add({
-          'rank': newRank,
+          'rank': i + 1,
           'points': championPoints,
           'name': championName,
-          'rankChange': rankChangeText,
+          //'rankChange': rankChangeText,
           'starPlayer': {
             'name': topPlayerName,
             'flag': regionFlag, // New flag emoji field

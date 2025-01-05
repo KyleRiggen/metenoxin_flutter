@@ -1,10 +1,7 @@
-// lib/services/firebase_service.dart
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:metenoxin_flutter/constants.dart';
 
 class FirebaseService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final Constants _constants = Constants();
 
   Future<void> saveListMap_challengers({
     required List<Map<String, dynamic>> data,
@@ -205,6 +202,74 @@ class FirebaseService {
       });
     } catch (e) {
       throw Exception('Error saving champion data to Firestore: $e');
+    }
+  }
+
+  Future<void> saveIndividualChamps({
+    required List<Map<String, dynamic>> data,
+    required String collectionName,
+  }) async {
+    try {
+      // Reference to the Firestore collection
+      final collectionRef = _firestore.collection(collectionName);
+
+      for (var champ in data) {
+        // Generate a unique document ID for each champ
+        final champId = champ['name'] ??
+            _firestore
+                .collection(collectionName)
+                .doc()
+                .id; // Use 'id' if provided or auto-generate one.
+
+        // Save each champ as a separate document
+        await collectionRef.doc(champId).set({
+          ...champ,
+          "savedAt": FieldValue.serverTimestamp(), // Add server timestamp
+        });
+      }
+    } catch (e) {
+      throw Exception('Error saving individual champion data to Firestore: $e');
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> fetchIndividualChamps({
+    required String collectionName,
+  }) async {
+    try {
+      // Reference to the Firestore collection
+      final collectionRef = _firestore.collection(collectionName);
+
+      // Get all documents in the collection
+      final querySnapshot = await collectionRef.get();
+
+      // Convert each document into a Map<String, dynamic>
+      List<Map<String, dynamic>> champs = querySnapshot.docs.map((doc) {
+        return {
+          "id": doc.id, // Include the document ID
+          ...doc.data(), // Document data
+        };
+      }).toList();
+
+      return champs;
+    } catch (e) {
+      throw Exception('Error fetching champion data from Firestore: $e');
+    }
+  }
+
+  // Update a single document in Firestore
+  Future<void> updateDocument({
+    required String collectionName,
+    required String documentId,
+    required Map<String, dynamic> data,
+  }) async {
+    try {
+      // Reference to the document in the collection
+      final docRef = _firestore.collection(collectionName).doc(documentId);
+
+      // Update the document with new data
+      await docRef.update(data);
+    } catch (e) {
+      throw Exception("Error updating document: $e");
     }
   }
 
