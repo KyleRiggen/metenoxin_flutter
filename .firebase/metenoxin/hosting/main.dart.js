@@ -75481,7 +75481,7 @@ l=0
 a1=J.an(m)
 case 10:if(!a1.q()){s=11
 break}k=a1.gG()
-if(l>=2){a9.$1(A.i(n)+" Reached the limit of 2")
+if(l>=2e5){a9.$1(A.i(n)+" Reached the limit of 200000")
 s=11
 break}q=13
 a2=b.oi("lol/summoner/v4/summoners/"+A.i(J.av(k,"summonerId")),a8,n)
@@ -75613,7 +75613,7 @@ a9.$1("champs from firebase "+J.bS(m))
 d=J.an(n),c=t.z,b=t.LR,a=t.L0,a0=o.c,a1=t.N
 case 8:if(!d.q()){s=9
 break}l=d.gG()
-if(a6>=6){s=9
+if(a6>=6e5){s=9
 break}++a6
 a9.$1("Processing match ID: "+A.i(l)+", "+A.i(a6)+" of "+J.bS(n))
 k=J.axG(l,"_")[0]
