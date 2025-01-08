@@ -9,20 +9,28 @@ class ApiCalls {
   }) async {
     final url =
         Uri.parse('https://$region.api.riotgames.com/$address?api_key=$apiKey');
-    //print(url);
     try {
+      await Future.delayed(Duration(milliseconds: 1000));
       final response = await http.get(url);
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         return data;
       } else {
+        // If the status code is not 200, print the status code and the URL
         print('Failed to fetch data: ${response.statusCode}');
         print(url);
         return null;
       }
     } catch (e) {
-      print('Error: $e');
+      // Catch errors (e.g., network issues or request errors) and print the error message
+      print('Error in basic API call: $e');
+      if (e is http.Response) {
+        print('Status Code: ${e.statusCode}');
+      } else {
+        // If it's not an HTTP response-related error, just print the error message
+        print('Exception details: $e');
+      }
       return null;
     }
   }
@@ -38,6 +46,7 @@ class ApiCalls {
     //print(url);
 
     try {
+      await Future.delayed(Duration(milliseconds: 1000));
       final response = await http.get(url);
 
       if (response.statusCode == 200) {
@@ -48,7 +57,7 @@ class ApiCalls {
         return null;
       }
     } catch (e) {
-      print('Error: $e');
+      print('Error in advanced: $e');
       return null;
     }
   }

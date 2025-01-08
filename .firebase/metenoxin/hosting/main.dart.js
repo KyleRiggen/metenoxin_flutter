@@ -75845,13 +75845,10 @@ tn(a){return this.aii(a)},
 aii(a2){var s=0,r=A.H(t.z),q=1,p,o=this,n,m,l,k,j,i,h,g,f,e,d,c,b,a,a0,a1
 var $async$tn=A.I(function(a3,a4){if(a3===1){p=a4
 s=q}while(true)switch(s){case 0:q=3
-a2.$1("line11")
 s=6
 return A.D(o.b.tC(),$async$tn)
 case 6:n=a4
-a2.$1("line15")
-if(J.pl(n)){a2.$1("line19")
-m=new A.ca("")
+if(J.pl(n)){m=new A.ca("")
 m.a+="__Champion Rank Points:__\n"
 c=m
 b=o.a.w
@@ -75868,25 +75865,20 @@ b="Loss "+A.i(b.h(0,"loses"))+" Points\n"
 a.a+=b
 m.a+="&nbsp;\n"
 m.a+="\n"
-a2.$1("line29")
 m.a+="[Last Week](https://www.reddit.com/r/doubloonin/comments/1hgwspe/league_of_legends_champion_popularityperformance/)\n"
 m.a+="\n"
 m.a+="| Rank/Change | Points | Name | Star Player |\n"
 m.a+="|-|-|-|-|\n"
-a2.$1("line35")
 for(l=0;l<J.bS(n);++l){k=J.av(n,l)
-a2.$1("line39")
 j=J.av(k,"rank")
 i=J.av(k,"name")
 h=J.av(k,"points")
 g=J.av(J.av(k,"starPlayer"),"name")
 f=J.av(J.av(k,"starPlayer"),"flag")
 e=J.av(J.av(k,"starPlayer"),"websiteUrl")
-a2.$1("line48")
 c=m
 b="| "+A.i(j)+" | "+A.i(h)+" | "+A.i(i)+" | ["+A.i(f)+" "+A.i(g)+"]("+A.i(e)+") |\n"
-c.a+=b}a2.$1("line53")
-c=m.a
+c.a+=b}c=m.a
 A.v2(new A.mU(c.charCodeAt(0)==0?c:c))
 a2.$1("Text copied to clipboard successfully!")}else a2.$1("No entries found in the database.")
 q=1

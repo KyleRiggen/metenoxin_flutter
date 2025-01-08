@@ -1,10 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:metenoxin_flutter/constants.dart';
 import 'package:metenoxin_flutter/utils/api_calls.dart';
-import 'package:metenoxin_flutter/utils/firebase.dart';
 import 'package:metenoxin_flutter/utils/waterfall/e_points.dart';
 
 class Champions {
-  FirebaseService _firestore = FirebaseService();
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   Constants _constants = Constants();
   ApiCalls _apiCalls = ApiCalls();
   Points _points = Points();
@@ -16,9 +16,9 @@ class Champions {
     int matchCounter = 0;
     try {
       // Retrieve match IDs from Firestore
-      List<String> matchDataList = await _firestore.getMatchIds();
+      List<String> matchDataList = await getMatchIds();
       final List<Map<String, dynamic>> setupChampData =
-          await _firestore.getListMap_setup(document: _constants.new_document);
+          await getListMap_setup(document: _constants.weekLabel);
 
       onStatusUpdate("matches from firebase ${matchDataList.length}");
       onStatusUpdate("champs from firebase ${setupChampData.length}");
@@ -42,7 +42,6 @@ class Champions {
           region: websiteRegion,
           apiKey: apiKey,
         );
-        await Future.delayed(Duration(milliseconds: 500));
 
         if (matchData != null) {
           var participants = matchData['info']['participants'];
@@ -117,12 +116,96 @@ class Champions {
           });
         }
       }
-      await _firestore.saveIndividualChamps(
-          data: setupChampData, collectionName: 'january5th');
+      saveListMap_setup(
+        data: setupChampData,
+        document: _constants.weekLabel,
+      );
       onStatusUpdate("Champion data successfully updated in Firestore.");
       _points.assignPoints(onStatusUpdate: onStatusUpdate);
     } catch (e) {
       onStatusUpdate("Error retrieving match data: $e");
+    }
+  }
+
+  Future<List<String>> getMatchIds() async {
+    try {
+      // Get the document reference for the match IDs
+      final docRef = _firestore.collection("players").doc("matchIds");
+      final docSnapshot = await docRef.get();
+
+      // Check if the document exists
+      if (docSnapshot.exists) {
+        final data = docSnapshot.data() as Map<String, dynamic>;
+
+        // Extract the "matchIds" field
+        final matchIdsData = data["matchIds"];
+
+        // Ensure the "matchIds" field is not null and is a List
+        if (matchIdsData != null && matchIdsData is List) {
+          return List<String>.from(matchIdsData);
+        } else {
+          throw Exception("Field 'matchIds' is missing or not a list.");
+        }
+      } else {
+        throw Exception("Document 'matchIds' does not exist in Firestore.");
+      }
+    } catch (e) {
+      throw Exception('Error retrieving match IDs from Firestore: $e');
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getListMap_setup({
+    required String document,
+  }) async {
+    try {
+      // Reference to the main document
+      final docRef = _firestore.collection("champions").doc(document);
+
+      // Get the document snapshot
+      final docSnapshot = await docRef.get();
+
+      // Retrieve and return the 'data' field as a List<Map<String, dynamic>>
+      if (docSnapshot.exists) {
+        final data = docSnapshot.data()?['data'] as List<dynamic>?;
+
+        if (data != null) {
+          return List<Map<String, dynamic>>.from(
+            data.map((item) => Map<String, dynamic>.from(item)),
+          );
+        }
+      }
+
+      return [];
+    } catch (e) {
+      throw Exception('Error retrieving champion data from Firestore: $e');
+    }
+  }
+
+  Future<void> saveListMap_setup({
+    required List<Map<String, dynamic>> data,
+    required String document,
+  }) async {
+    try {
+      // Reference to the main document
+      final docRef = _firestore.collection("champions").doc(document);
+
+      // Create a map to store the champions with dynamic field names
+      Map<String, dynamic> championsMap = {};
+
+      // Loop through each champion and add it to the championsMap with a unique field name
+      for (int i = 0; i < data.length; i++) {
+        championsMap[data[i]["name"]] = data[i];
+      }
+
+      // Save the list and metadata to the document, including each champion as a separate field
+      await docRef.set({
+        "metadata": "Champ data collection",
+        "a_savedAt": FieldValue.serverTimestamp(), // Add server timestamp
+        "data": data, // Store the entire list as a field
+        ...championsMap, // Spread the championsMap to add each champion as a new field
+      });
+    } catch (e) {
+      throw Exception('Error saving champion data to Firestore: $e');
     }
   }
 }

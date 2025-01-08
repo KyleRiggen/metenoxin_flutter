@@ -1,12 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:metenoxin_flutter/constants.dart';
 import 'package:metenoxin_flutter/utils/api_calls.dart';
-import 'package:metenoxin_flutter/utils/firebase.dart';
 import 'package:metenoxin_flutter/utils/waterfall/b_puuids.dart';
 
 class Challengers {
   ApiCalls _apiCalls = ApiCalls();
-  FirebaseService _firebase = FirebaseService();
   Constants constants = Constants();
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   Puuids _puuids = Puuids();
 
   Future<void> callChallengers({
@@ -33,7 +33,7 @@ class Challengers {
 
         onStatusUpdate(
             "Successfully retrieved ${entries.length} challengers from ${region}");
-        await _firebase.saveListMap_challengers(
+        await saveListMap_challengers(
           data: entries,
           region: region,
         );
@@ -45,6 +45,31 @@ class Challengers {
     } catch (e) {
       onStatusUpdate("Error fetching challenger data: $e");
       throw Exception('Error fetching challenger data: $e');
+    }
+  }
+
+  Future<void> saveListMap_challengers({
+    required List<Map<String, dynamic>> data,
+    required String region,
+  }) async {
+    try {
+      // Initialize a batch
+      WriteBatch batch = _firestore.batch();
+
+      // Create a single document to store all entries
+      final docRef = _firestore.collection("players").doc("challengers");
+
+      // Add all entries as a field under this document
+      batch.set(
+        docRef,
+        {region: data},
+        SetOptions(merge: true),
+      );
+
+      // Commit the batch (single write operation)
+      await batch.commit();
+    } catch (e) {
+      throw Exception('Error saving challenger data to Firestore: $e');
     }
   }
 }

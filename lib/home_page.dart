@@ -13,9 +13,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final TextEditingController _textController = TextEditingController();
   ChampSetup _champSetup = ChampSetup();
-  Challengers _challengers = Challengers();
   RedditTextHandler _text = RedditTextHandler();
-  // Points _points = Points();
 
   String _statusMessage = '';
   final List<String> _statusHistory = [];
@@ -24,29 +22,17 @@ class _HomePageState extends State<HomePage> {
     _statusMessage = newMessage;
     _statusHistory.add(newMessage);
 
-    // Limit history to 10 messages
     if (_statusHistory.length > 200) {
       _statusHistory.removeAt(0);
     }
   }
 
-  Future<void> _setupChampions() async {
+  Future<void> _setupChampions(apiKey) async {
     await _champSetup.fetchAndFormatChampionData((status) {
       setState(() {
         _updateStatusMessage(status);
       });
-    });
-  }
-
-  Future<void> _getChallengers(apiKey) async {
-    await _challengers.callChallengers(
-      apiKey: apiKey,
-      onStatusUpdate: (status) {
-        setState(() {
-          _updateStatusMessage(status);
-        });
-      },
-    );
+    }, apiKey);
   }
 
   void _copyRedditText() async {
@@ -75,24 +61,19 @@ class _HomePageState extends State<HomePage> {
                 labelText: 'Enter API',
                 border: OutlineInputBorder(),
               ),
-              onSubmitted: (_) => _getChallengers(_textController.text),
+              onSubmitted: (_) => _setupChampions(_textController.text),
             ),
             const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 ElevatedButton(
-                  onPressed: () => _getChallengers(_textController.text),
-                  //onPressed: () => _getChallengers(),
-                  child: const Text('Get Challengers'),
-                ),
-                ElevatedButton(
                   onPressed: _copyRedditText,
                   child: const Text('Copy'),
                 ),
                 ElevatedButton(
-                  onPressed: _setupChampions,
-                  child: const Text('Setup Champs'),
+                  onPressed: () => _setupChampions(_textController.text),
+                  child: const Text('Champs'),
                 ),
               ],
             ),

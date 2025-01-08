@@ -1,16 +1,15 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import 'package:metenoxin_flutter/constants.dart';
-import 'package:metenoxin_flutter/utils/firebase.dart';
 
 class RedditTextHandler {
   Constants _constants = Constants();
-  FirebaseService _firestore = FirebaseService();
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   toRedditText({required Function(String) onStatusUpdate}) async {
     try {
       // Fetch the compared data
-      final List<Map<String, dynamic>> jsonList =
-          await _firestore.getCompared();
+      final List<Map<String, dynamic>> jsonList = await getCompared();
 
       // Check if the list has entries
       if (jsonList.isNotEmpty) {
@@ -52,6 +51,30 @@ class RedditTextHandler {
       }
     } catch (e) {
       onStatusUpdate('Error fetching data: $e');
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getCompared() async {
+    try {
+      // Reference to the document
+      final docRef = _firestore.collection("new-style-champs").doc("compared");
+
+      // Fetch the document
+      final docSnapshot = await docRef.get();
+
+      if (docSnapshot.exists) {
+        // Extract the 'data' field from the document
+        final data = docSnapshot.data()?['data'];
+        if (data != null && data is List) {
+          return List<Map<String, dynamic>>.from(data);
+        } else {
+          throw Exception('No valid data field found in the document.');
+        }
+      } else {
+        throw Exception('Document does not exist.');
+      }
+    } catch (e) {
+      throw Exception('Error retrieving champion data from Firestore: $e');
     }
   }
 }
