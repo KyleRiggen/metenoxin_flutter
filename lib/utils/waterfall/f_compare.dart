@@ -10,19 +10,25 @@ class Compare {
   Future<void> compareFromLastWeek(
       {required Function(String) onStatusUpdate}) async {
     try {
+      List<Map<String, dynamic>> lastWeekChampList =
+          await getChampsList(document: _constants.lastWeekLabel);
       List<Map<String, dynamic>> champsList =
           await getChampsList(document: _constants.weekLabel);
 
-      onStatusUpdate("champs gotten to compare: ${champsList.length}");
+      onStatusUpdate("old champs points: ${lastWeekChampList[0]["points"]}");
+      onStatusUpdate("champs points: ${champsList[0]["points"]}");
 
-      // // Create ranking maps (old vs new rank)
-      // final Map<String, int> oldRanks = {
-      //   for (int i = 0; i < oldList.length; i++) oldList[i]['key']: i + 1,
-      // };
+      // Create ranking maps (old vs new rank)
+      final Map<String, int> oldRanks = {
+        for (int i = 0; i < lastWeekChampList.length; i++)
+          lastWeekChampList[i]['key']: i + 1,
+      };
 
-      // final Map<String, int> newRanks = {
-      //   for (int i = 0; i < newList.length; i++) newList[i]['key']: i + 1,
-      // };
+      final Map<String, int> newRanks = {
+        for (int i = 0; i < champsList.length; i++) champsList[i]['key']: i + 1,
+      };
+
+      onStatusUpdate("old ranks: ${oldRanks[0]} | new ranks: ${newRanks[0]}");
 
       // Sort champions by points in descending order
       champsList.sort((a, b) {
@@ -30,6 +36,8 @@ class Compare {
         final pointsB = b['points'] ?? 0; // Default to 0 if points are missing
         return pointsB.compareTo(pointsA); // Sort in descending order
       });
+      onStatusUpdate("old champs name: ${lastWeekChampList[0]["name"]}");
+      onStatusUpdate("champs name: ${champsList[0]["name"]}");
 
       onStatusUpdate("champs sorted to compare: ${champsList.length}");
 
@@ -40,21 +48,22 @@ class Compare {
         String championName = champion['name'];
         int championPoints = champion['points'];
 
-        // // Calculate rank change
-        // var oldRank =
-        //     oldRanks[championKey] ?? oldList.length + 1; // Default to last+1
-        // var newRank =
-        //     newRanks[championKey] ?? newList.length + 1; // Default to last+1
-        // var rankChange = oldRank - newRank;
+        // Calculate rank change
+        var oldRank = oldRanks[championKey] ??
+            lastWeekChampList.length + 1; // Default to last+1
+        var newRank =
+            newRanks[championKey] ?? champsList.length + 1; // Default to last+1
+        onStatusUpdate("old rank: ${oldRank} | newRank $newRank");
+        var rankChange = oldRank - newRank;
 
-        // String rankChangeText = "";
-        // if (rankChange > 0) {
-        //   rankChangeText = "🟩🔺$rankChange";
-        // } else if (rankChange < 0) {
-        //   rankChangeText = "🟥🔻${rankChange.abs()}";
-        // } else {
-        //   rankChangeText = "🟨0";
-        // }
+        String rankChangeText = "";
+        if (rankChange > 0) {
+          rankChangeText = "🟩🔺$rankChange";
+        } else if (rankChange < 0) {
+          rankChangeText = "🟥🔻${rankChange.abs()}";
+        } else {
+          rankChangeText = "🟨0";
+        }
 
         // Handle current week's star player
         var topPlayer = champion['players']?.isNotEmpty == true
@@ -86,10 +95,10 @@ class Compare {
           'rank': i + 1,
           'points': championPoints,
           'name': championName,
-          //'rankChange': rankChangeText,
+          'rankChange': rankChangeText,
           'starPlayer': {
             'name': topPlayerName,
-            'flag': regionFlag, // New flag emoji field
+            'flag': regionFlag,
             'websiteUrl':
                 'https://www.op.gg/summoners/$websiteRegion/$encodedName-$encodedTagline',
           }

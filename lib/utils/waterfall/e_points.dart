@@ -39,7 +39,11 @@ class Points {
           return (pointsB.compareTo(pointsA));
         });
 
-        // Optionally update the status
+        // Keep only the top player
+        if (champ['players'].isNotEmpty) {
+          champ['players'] = [champ['players'].first];
+        }
+
         onStatusUpdate(
             "Champion: ${champ['name']} - Updated Points: $updatedPoints");
       }

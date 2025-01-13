@@ -15,18 +15,24 @@ class RedditTextHandler {
       if (jsonList.isNotEmpty) {
         // Create content using StringBuffer
         StringBuffer content = StringBuffer();
-        content.writeln("__Champion Rank Points:__");
-        content.writeln("Picked +${_constants.points["picks"]} Point");
-        content.writeln("Banned +${_constants.points["bans"]} Point");
-        content.writeln("Won +${_constants.points["wins"]} Points");
-        content.writeln("Loss ${_constants.points["loses"]} Points");
+        content.writeln("__Champion Rank Points:__               ");
+        content.writeln(
+            "Picked +${_constants.points["picks"]} Point               ");
+        content.writeln(
+            "Banned +${_constants.points["bans"]} Point               ");
+        content
+            .writeln("Won +${_constants.points["wins"]} Points               ");
+        content.writeln(
+            "Loss ${_constants.points["loses"]} Points               ");
         content.writeln("&nbsp;");
-        content.writeln("");
+        content.writeln("               ");
 
-        content.writeln("[Last Week](${_constants.previousWeekLink})");
-        content.writeln("");
-        content.writeln("| Rank/Change | Points | Name | Star Player |");
-        content.writeln("|-|-|-|-|");
+        content.writeln(
+            "[Last Week](${_constants.previousWeekLink})               ");
+        content.writeln("               ");
+        content.writeln(
+            "| Rank/Change | Points | Name | Star Player |               ");
+        content.writeln("|-|-|-|-|               ");
 
         for (int i = 0; i < jsonList.length; i++) {
           var champion = jsonList[i];
@@ -34,7 +40,7 @@ class RedditTextHandler {
           int championRank = champion['rank'];
           String championName = champion['name'];
           int championPoints = champion['points'];
-          // String championRankChange = champion['rankChange'];
+          String championRankChange = champion['rankChange'];
           String topPlayerName = champion['starPlayer']['name'];
           String topPlayerFlag = champion['starPlayer']['flag'];
           String topPlayerWebsite = champion['starPlayer']['websiteUrl'];
@@ -57,7 +63,7 @@ class RedditTextHandler {
   Future<List<Map<String, dynamic>>> getCompared() async {
     try {
       // Reference to the document
-      final docRef = _firestore.collection("new-style-champs").doc("compared");
+      final docRef = _firestore.collection("champions").doc("compared");
 
       // Fetch the document
       final docSnapshot = await docRef.get();

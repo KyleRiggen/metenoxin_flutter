@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:metenoxin_flutter/utils/champ_setup.dart';
-import 'package:metenoxin_flutter/utils/waterfall/a_challengers.dart';
 import 'package:metenoxin_flutter/utils/waterfall/g_text.dart';
 
 class HomePage extends StatefulWidget {
