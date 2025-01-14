@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import 'package:metenoxin_flutter/constants.dart';
@@ -10,6 +12,14 @@ class RedditTextHandler {
     try {
       // Fetch the compared data
       final List<Map<String, dynamic>> jsonList = await getCompared();
+
+      // for (var entry in jsonList.asMap().entries) {
+      //   int i = entry.key; // The index of the current champ
+      //   var champ = entry.value; // The champ itself
+
+      //   onStatusUpdate(
+      //       'name: ${champ["name"]}, points: ${champ["points"]}, rank: ${champ["rank"]}, change: ${champ["rankChange"]}');
+      // }
 
       // Check if the list has entries
       if (jsonList.isNotEmpty) {
@@ -37,16 +47,17 @@ class RedditTextHandler {
         for (int i = 0; i < jsonList.length; i++) {
           var champion = jsonList[i];
 
-          int championRank = champion['rank'];
-          String championName = champion['name'];
-          int championPoints = champion['points'];
-          String championRankChange = champion['rankChange'];
-          String topPlayerName = champion['starPlayer']['name'];
-          String topPlayerFlag = champion['starPlayer']['flag'];
-          String topPlayerWebsite = champion['starPlayer']['websiteUrl'];
+          int championRank = champion['rank'] ?? 888888;
+          String championName = champion['name'] ?? "hello";
+          int championPoints = champion['points'] ?? 888888;
+          String championRankChange = champion['rankChange'] ?? "hello";
+          String topPlayerName = champion['starPlayer']['name'] ?? "hello";
+          String topPlayerFlag = champion['starPlayer']['flag'] ?? "hello";
+          String topPlayerWebsite =
+              champion['starPlayer']['websiteUrl'] ?? "hello";
 
           content.writeln(
-              "| $championRank | $championPoints | $championName | [$topPlayerFlag $topPlayerName]($topPlayerWebsite) |");
+              "| $championRank $championRankChange | $championPoints | $championName | [$topPlayerFlag $topPlayerName]($topPlayerWebsite) |");
         }
 
         // Save content to clipboard

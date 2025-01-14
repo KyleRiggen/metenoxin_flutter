@@ -43,9 +43,6 @@ class Points {
         if (champ['players'].isNotEmpty) {
           champ['players'] = [champ['players'].first];
         }
-
-        onStatusUpdate(
-            "Champion: ${champ['name']} - Updated Points: $updatedPoints");
       }
 
       // Save updated champions data back to Firestore

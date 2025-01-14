@@ -46,7 +46,7 @@ class ApiCalls {
     //print(url);
 
     try {
-      await Future.delayed(Duration(milliseconds: 1000));
+      await Future.delayed(Duration(milliseconds: 800));
       final response = await http.get(url);
 
       if (response.statusCode == 200) {

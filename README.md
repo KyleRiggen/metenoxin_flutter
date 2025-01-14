@@ -1,16 +1,10 @@
-# metenoxin_flutter
+# reddit data collection
 
-A new Flutter project.
+make a post to reddit once a week that shows the popularity and performance of champions thoughout the week
 
-## Getting Started
+## how to use
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+change variables in this folder: lib/constants.dart
+    - change the API count to do a full run or a partial debugging run
+    - change the lastWeekLabel and weekLabel variable to create and compare the appropriate data sets
+    - change the previousWeekLink variable to get a smooth link to last weeks post

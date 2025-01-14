@@ -10,51 +10,41 @@ class Compare {
   Future<void> compareFromLastWeek(
       {required Function(String) onStatusUpdate}) async {
     try {
+      onStatusUpdate("-----------------------");
       List<Map<String, dynamic>> lastWeekChampList =
           await getChampsList(document: _constants.lastWeekLabel);
       List<Map<String, dynamic>> champsList =
           await getChampsList(document: _constants.weekLabel);
 
-      onStatusUpdate("old champs points: ${lastWeekChampList[0]["points"]}");
-      onStatusUpdate("champs points: ${champsList[0]["points"]}");
-
-      // Create ranking maps (old vs new rank)
-      final Map<String, int> oldRanks = {
-        for (int i = 0; i < lastWeekChampList.length; i++)
-          lastWeekChampList[i]['key']: i + 1,
-      };
-
-      final Map<String, int> newRanks = {
-        for (int i = 0; i < champsList.length; i++) champsList[i]['key']: i + 1,
-      };
-
-      onStatusUpdate("old ranks: ${oldRanks[0]} | new ranks: ${newRanks[0]}");
-
-      // Sort champions by points in descending order
       champsList.sort((a, b) {
         final pointsA = a['points'] ?? 0; // Default to 0 if points are missing
         final pointsB = b['points'] ?? 0; // Default to 0 if points are missing
         return pointsB.compareTo(pointsA); // Sort in descending order
       });
-      onStatusUpdate("old champs name: ${lastWeekChampList[0]["name"]}");
-      onStatusUpdate("champs name: ${champsList[0]["name"]}");
 
-      onStatusUpdate("champs sorted to compare: ${champsList.length}");
+      Map<String, int> oldPositions = {
+        for (var i = 0; i < lastWeekChampList.length; i++)
+          lastWeekChampList[i]['key']: i
+      };
+      Map<String, int> newPositions = {
+        for (var i = 0; i < champsList.length; i++) champsList[i]['key']: i
+      };
 
       List<Map<String, dynamic>> championsData = [];
-      for (int i = 0; i < champsList.length; i++) {
-        var champion = champsList[i];
-        String championKey = champion['key'];
-        String championName = champion['name'];
-        int championPoints = champion['points'];
+      // Add rank change field to each champ in champsList
+      for (var entry in champsList.asMap().entries) {
+        int i = entry.key; // The index of the current champ
+        var champ = entry.value; // The champ itself
 
-        // Calculate rank change
-        var oldRank = oldRanks[championKey] ??
-            lastWeekChampList.length + 1; // Default to last+1
-        var newRank =
-            newRanks[championKey] ?? champsList.length + 1; // Default to last+1
-        onStatusUpdate("old rank: ${oldRank} | newRank $newRank");
-        var rankChange = oldRank - newRank;
+        String championKey = champ['key'];
+        String championName = champ['name'];
+        int championPoints = champ['points'];
+
+        int oldRank =
+            oldPositions[championKey] ?? -1; // Default to -1 if not found
+        int newRank =
+            newPositions[championKey] ?? -1; // Default to -1 if not found
+        int rankChange = oldRank - newRank;
 
         String rankChangeText = "";
         if (rankChange > 0) {
@@ -65,10 +55,8 @@ class Compare {
           rankChangeText = "🟨0";
         }
 
-        // Handle current week's star player
-        var topPlayer = champion['players']?.isNotEmpty == true
-            ? champion['players'][0]
-            : null;
+        var topPlayer =
+            champ['players']?.isNotEmpty == true ? champ['players'][0] : null;
         String topPlayerName = topPlayer?['riotIdGameName'] ?? 'No players';
         String topPlayerTagline = topPlayer?['riotIdTagline'] ?? '';
         String topPlayerRegion = topPlayer?['region'] ?? '';
@@ -78,19 +66,15 @@ class Compare {
               'EUW1': 'euw',
             }[topPlayerRegion] ??
             'unknown';
-
         String regionFlag = {
               'NA1': '🇺🇸',
               'KR': '🇰🇷',
               'EUW1': '🇪🇺',
             }[topPlayerRegion] ??
             '🏴‍☠️';
-
-        // Encode player name for URL
         final encodedName = Uri.encodeComponent(topPlayerName);
         final encodedTagline = Uri.encodeComponent(topPlayerTagline);
 
-        // Add champion data with streak count, star player information, and flag
         championsData.add({
           'rank': i + 1,
           'points': championPoints,
@@ -104,8 +88,8 @@ class Compare {
           }
         });
       }
-      await saveCompared(data: championsData);
-      onStatusUpdate("Compared data successfully updated in Firestore.");
+
+      saveCompared(data: championsData);
       _text.toRedditText(onStatusUpdate: onStatusUpdate);
     } catch (e) {
       onStatusUpdate("Error compairing: $e");
